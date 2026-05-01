@@ -1,0 +1,8 @@
+1,Harindu,000111,hirumalwimalasinghe123@gmail.com
+2,harindu,111000,hh@gmail.com
+3,hirumal,0000000,hirumal@gmail.com
+4,john,12345,john@example.com
+5,admin,admin123,admin@example.com
+6,wimalasinghe,200230200250,wimalasinghe@gmail.com
+7,samudra,samudra,samudra@gmail.com
+8,Dog,dog123,dog@gmail.com

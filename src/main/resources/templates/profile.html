@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Movie Booking System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(30, 41, 59, 0.7);
+        }
+
+        * { font-family: 'Outfit', sans-serif; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(15, 23, 42, 0.8) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .profile-container {
+            max-width: 1000px;
+            margin: 4rem auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .booking-card {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .booking-card:hover {
+            transform: scale(1.02);
+            border-color: var(--primary);
+        }
+
+        .movie-title {
+            color: var(--primary);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .booking-meta {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .status-confirmed { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+
+        .price {
+            font-weight: 700;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .btn-home {
+            background: var(--primary);
+            color: white;
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+            transition: 0.3s;
+        }
+
+        .btn-home:hover {
+            background: var(--primary-hover);
+            color: white;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">🎬 MOVIEBOOK</a>
+        <div class="ms-auto">
+            <a href="/users/logout" class="btn btn-outline-light btn-sm rounded-pill px-3">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="profile-container">
+    <div class="card">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>My Bookings</h1>
+            <div class="text-end">
+                <p class="mb-0 text-muted">Logged in as</p>
+                <p class="fw-bold text-white mb-0" th:text="${username}">Username</p>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(bookings)}" class="empty-state">
+            <h3>No bookings yet!</h3>
+            <p>You haven't booked any movies yet. Go ahead and explore what's playing!</p>
+            <a href="/" class="btn-home">Explore Movies</a>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(bookings)}">
+            <div th:each="booking : ${bookings}" class="booking-card d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="movie-title" th:text="${booking.movieTitle}">Movie Title</div>
+                    <div class="booking-meta">
+                        📅 <span th:text="${booking.bookingDate}">Date</span> • 
+                        🕒 <span th:text="${booking.time}">Time</span> • 
+                        🎟️ <span th:text="${booking.numberOfSeats}">1</span> Seats
+                    </div>
+                </div>
+                <div class="text-end">
+                    <div class="price" th:text="'$' + ${#numbers.formatDecimal(booking.totalPrice, 0, 2)}">$12.99</div>
+                    <div class="mt-2">
+                        <span th:class="'status-badge ' + (${booking.status == 'PENDING' ? 'status-pending' : 'status-confirmed'})" 
+                              th:text="${booking.status}">PENDING</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

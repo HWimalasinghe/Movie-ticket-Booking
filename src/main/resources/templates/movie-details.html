@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${movie.title + ' - Movie Booking System'}">Movie Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { font-family: 'Outfit', sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(15, 23, 42, 0.8) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .movie-header {
+            padding: 4rem 0;
+            background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.1), transparent);
+        }
+
+        .movie-poster-large {
+            width: 100%;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .movie-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .badge-custom {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-muted);
+            border-radius: 12px;
+            padding: 0.6rem 1.2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .selection-section {
+            background: var(--card-bg);
+            border-radius: 32px;
+            padding: 3rem;
+            margin-top: -4rem;
+            position: relative;
+            z-index: 10;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .selection-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .date-card, .time-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .date-card:hover, .time-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+
+        .date-card.selected, .time-card.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+        }
+
+        .date-card.selected .card-text, .date-card.selected .card-title {
+            color: white !important;
+        }
+
+        .form-control-custom {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+            color: #fff;
+            border-radius: 12px;
+            padding: 0.8rem 1.2rem;
+        }
+
+        .form-control-custom:focus {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: var(--primary);
+            box-shadow: none;
+            color: #fff;
+        }
+
+        .btn-book-now {
+            background: linear-gradient(to right, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 1.2rem 3rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-book-now:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.4);
+            color: white;
+        }
+
+        .btn-book-now:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #475569;
+        }
+
+        #alertContainer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">🎬 MOVIEBOOK</a>
+        <div class="ms-auto d-flex align-items-center gap-3">
+            <a th:if="${isLoggedIn}" href="/users/profile" class="btn btn-outline-primary btn-sm rounded-pill px-3">My Bookings</a>
+            <a th:if="${isLoggedIn}" href="/users/logout" class="btn btn-outline-light btn-sm rounded-pill px-3">Logout</a>
+            <div th:unless="${isLoggedIn}" class="d-flex gap-2">
+                <a href="/users/login" class="btn btn-link text-white text-decoration-none">Login</a>
+                <a href="/users/register" class="btn btn-primary btn-sm rounded-pill px-3">Register</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="movie-header">
+    <div class="container">
+        <div id="alertContainer"></div>
+        <div class="row align-items-center">
+            <div class="col-md-4">
+                <img th:src="${movie.imageUrl}" class="movie-poster-large" th:alt="${movie.title + ' Poster'}">
+            </div>
+            <div class="col-md-8 ps-md-5 mt-4 mt-md-0">
+                <div class="d-flex gap-2 mb-3">
+                    <span class="badge-custom" th:text="${movie.genre}">Genre</span>
+                    <span class="badge-custom" th:text="${movie.duration + ' min'}">Duration</span>
+                </div>
+                <h1 class="movie-title" th:text="${movie.title}">Movie Title</h1>
+                <p class="lead text-muted mb-4" th:text="${movie.description}">Description...</p>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="text-muted">Ticket Price:</span>
+                    <h3 class="mb-0 fw-bold text-primary" th:text="'$' + ${#numbers.formatDecimal(movie.price, 0, 2)}">$12.99</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="selection-section">
+        <div class="row">
+            <div class="col-lg-8">
+                <h2 class="selection-title">📅 Select Date</h2>
+                <div class="row row-cols-2 row-cols-md-4 g-3 mb-5">
+                    <div class="col" th:each="date : ${dates}">
+                        <div class="date-card" onclick="selectDate(this)">
+                            <div class="fw-bold text-white small mb-1" th:text="${#temporals.format(date, 'EEE')}">Day</div>
+                            <div class="text-muted" th:text="${#temporals.format(date, 'MMM d')}"
+                                 th:attr="data-date=${#temporals.format(date, 'yyyy-MM-dd')}">Date</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="selection-title">🕒 Select Time</h2>
+                <div class="row row-cols-2 row-cols-md-5 g-3 mb-5">
+                    <div class="col" th:each="time : ${showTimes}">
+                        <div class="time-card" onclick="selectTime(this)">
+                            <span class="fw-bold" th:text="${time}">Time</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="p-4 rounded-3" style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255,255,255,0.05);">
+                    <h2 class="selection-title">🎟️ Booking Summary</h2>
+                    <div class="mb-4">
+                        <label class="form-label text-muted small">Number of Seats</label>
+                        <input type="number" id="numberOfSeats" class="form-control form-control-custom" value="1" min="1" max="10" onchange="updateBookingButton()">
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-4 pt-3 border-top border-secondary">
+                        <span class="text-muted">Total Price:</span>
+                        <span class="fw-bold text-white fs-4" id="totalPriceDisplay" th:text="'$' + ${#numbers.formatDecimal(movie.price, 0, 2)}">$12.99</span>
+                    </div>
+
+                    <button th:if="${isLoggedIn}" class="btn-book-now w-100"
+                            onclick="proceedToBooking()" disabled id="bookingButton">
+                        Confirm Booking
+                    </button>
+                    <a th:unless="${isLoggedIn}" href="/users/login"
+                       class="btn-book-now w-100 text-center text-decoration-none d-block">
+                        Login to Book
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    let selectedDate = null;
+    let selectedTime = null;
+    const moviePrice = /*[[${movie.price}]]*/ 10.00;
+    const bookingButton = document.getElementById('bookingButton');
+    const seatsInput = document.getElementById('numberOfSeats');
+    const totalPriceDisplay = document.getElementById('totalPriceDisplay');
+    const movieTitle = /*[[${movie.title}]]*/ 'Movie Title';
+
+    function showAlert(message, type = 'danger') {
+        const alertContainer = document.getElementById('alertContainer');
+        alertContainer.innerHTML = `
+            <div class="alert alert-${type} alert-dismissible fade show border-0 shadow" role="alert" style="background: ${type === 'success' ? '#22c55e' : '#ef4444'}; color: #fff;">
+                ${message}
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        setTimeout(() => {
+            const alert = document.querySelector('.alert');
+            if (alert) {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }
+        }, 5000);
+    }
+
+    function selectDate(element) {
+        document.querySelectorAll('.date-card').forEach(card => card.classList.remove('selected'));
+        element.classList.add('selected');
+        selectedDate = element.querySelector('[data-date]').getAttribute('data-date');
+        updateBookingButton();
+    }
+
+    function selectTime(element) {
+        document.querySelectorAll('.time-card').forEach(card => card.classList.remove('selected'));
+        element.classList.add('selected');
+        selectedTime = element.querySelector('span').textContent.trim();
+        updateBookingButton();
+    }
+
+    function updateBookingButton() {
+        const seats = parseInt(seatsInput.value) || 0;
+        totalPriceDisplay.textContent = '$' + (seats * moviePrice).toFixed(2);
+        if (bookingButton) {
+            bookingButton.disabled = !(selectedDate && selectedTime && seats > 0);
+        }
+    }
+
+    function proceedToBooking() {
+        const seats = parseInt(seatsInput.value);
+        if (selectedDate && selectedTime && seats > 0) {
+            bookingButton.disabled = true;
+            bookingButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+            
+            fetch(`/movies/${encodeURIComponent(movieTitle)}/book`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `bookingDate=${selectedDate}&time=${encodeURIComponent(selectedTime)}&numberOfSeats=${seats}`
+            })
+            .then(response => response.text())
+            .then(result => {
+                if (result === 'success') {
+                    showAlert('Booking successful! Redirecting...', 'success');
+                    setTimeout(() => window.location.href = '/users/profile', 2000);
+                } else if (result.startsWith('redirect:')) {
+                    window.location.href = result.split(':')[1];
+                } else {
+                    showAlert(result.replace('error: ', ''));
+                    bookingButton.disabled = false;
+                    bookingButton.textContent = 'Confirm Booking';
+                }
+            })
+            .catch(error => {
+                showAlert('An error occurred. Please try again.');
+                bookingButton.disabled = false;
+                bookingButton.textContent = 'Confirm Booking';
+            });
+        }
+    }
+</script>
+</body>
+</html>

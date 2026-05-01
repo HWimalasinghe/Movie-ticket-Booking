@@ -118,7 +118,11 @@ OnlineTickte/
 
 ## 📸 Screenshots
 
-> *(Add screenshots of your application here)*
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/7d94ca18-f501-4f96-8bc7-13a468ad7c00" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/a7ba073d-48fc-4034-a217-70dbadc4681b" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/fe764d6a-5a4e-4f1b-a408-89fe287550f8" />
+
+
 
 ---
 

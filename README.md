@@ -124,13 +124,13 @@ OnlineTickte/
 
 ## 👨‍💻 Author
 
-| Name    | Student ID | Institute |
-|---------|------------|-----------|
-| *(Your Name)* | *(Your ID)* | SLIIT — Faculty of Computing |
+| Name                 | Student ID | Institute                    |
+|----------------------|------------|------------------------------|
+| Harindu WImalasinghe | IT24100600 | SLIIT — Faculty of Computing |
 
 ---
 
 ## 📄 License
 
 This project is submitted as an academic assignment for the **OOP Module** at SLIIT.  
-© 2026 — All rights reserved.
+© 2024 — All rights reserved.
